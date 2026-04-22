@@ -6,20 +6,16 @@ export interface TelegramEmojiJson {
   size?: number;
 }
 
-export enum TelegramEmojiConvertMode {
-  MemoryOnly = 'memory-only'
-}
-
-export interface TelegramEmojiConvertOptions {
-  mode?: TelegramEmojiConvertMode;
-  outputPath?: string;
-}
-
 export interface TelegramEmojiConverterOptions {
   ffmpegPath: string;
   rlottieCliPath: string;
 }
 
+export interface TelegramEmojiConversionResult {
+  type: 'gif' | 'png';
+  buffer: Buffer;
+}
+
 export interface EmojiFormatConverter<TResult = unknown> {
-  convert(input: TelegramEmojiJson, options?: TelegramEmojiConvertOptions): Promise<TResult>;
+  convert(input: TelegramEmojiJson): Promise<TResult>;
 }

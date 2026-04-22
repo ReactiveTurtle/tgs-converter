@@ -1,9 +1,14 @@
 import { TgsTelegramEmojiConverter } from './converters/TgsTelegramEmojiConverter';
 import { WebpTelegramEmojiConverter } from './converters/WebpTelegramEmojiConverter';
-import type { EmojiFormatConverter, TelegramEmojiConvertOptions, TelegramEmojiConverterOptions, TelegramEmojiJson } from './types';
+import type {
+  EmojiFormatConverter,
+  TelegramEmojiConversionResult,
+  TelegramEmojiConverterOptions,
+  TelegramEmojiJson
+} from './types';
 
 export class TelegramEmojiConverter {
-  private readonly converters: Record<string, EmojiFormatConverter<Buffer>>;
+  private readonly converters: Record<string, EmojiFormatConverter<TelegramEmojiConversionResult>>;
 
   public constructor(options: TelegramEmojiConverterOptions) {
     this.converters = {
@@ -12,12 +17,12 @@ export class TelegramEmojiConverter {
     };
   }
 
-  public async convert(input: TelegramEmojiJson, options?: TelegramEmojiConvertOptions): Promise<Buffer> {
+  public async convert(input: TelegramEmojiJson): Promise<TelegramEmojiConversionResult> {
     const converter = this.resolveConverter(input);
-    return converter.convert(input, options);
+    return converter.convert(input);
   }
 
-  private resolveConverter(input: TelegramEmojiJson): EmojiFormatConverter<Buffer> {
+  private resolveConverter(input: TelegramEmojiJson): EmojiFormatConverter<TelegramEmojiConversionResult> {
     const converter = this.converters[input.type];
 
     if (!converter) {

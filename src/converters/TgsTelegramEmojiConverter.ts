@@ -1,15 +1,17 @@
 import { spawn } from 'child_process';
-import { writeFile } from 'fs/promises';
-import { resolve } from 'path';
 import { gunzipSync } from 'zlib';
 
-import { TelegramEmojiConvertMode } from '../types';
-import type { EmojiFormatConverter, TelegramEmojiConvertOptions, TelegramEmojiConverterOptions, TelegramEmojiJson } from '../types';
+import type {
+  EmojiFormatConverter,
+  TelegramEmojiConversionResult,
+  TelegramEmojiConverterOptions,
+  TelegramEmojiJson
+} from '../types';
 import { downloadBuffer } from '../utils/buffer-util';
 import { createInfoArgs, createRenderFrameArgs, parseRlottieInfo } from './tgs-strategies/TelegramEmojiRlottieHelper';
 import { runCommandAndCaptureOutput } from '../utils/process-util';
 
-export class TgsTelegramEmojiConverter implements EmojiFormatConverter<Buffer> {
+export class TgsTelegramEmojiConverter implements EmojiFormatConverter<TelegramEmojiConversionResult> {
   private readonly ffmpegPath: string;
   private readonly rlottieCliPath: string;
 
@@ -18,13 +20,7 @@ export class TgsTelegramEmojiConverter implements EmojiFormatConverter<Buffer> {
     this.rlottieCliPath = options.rlottieCliPath;
   }
 
-  public async convert(input: TelegramEmojiJson, options?: TelegramEmojiConvertOptions): Promise<Buffer> {
-    const mode = options?.mode ?? TelegramEmojiConvertMode.MemoryOnly;
-
-    if (mode !== TelegramEmojiConvertMode.MemoryOnly) {
-      throw new Error(`Unsupported TGS conversion mode: ${mode}`);
-    }
-
+  public async convert(input: TelegramEmojiJson): Promise<TelegramEmojiConversionResult> {
     const tgsBuffer = await downloadBuffer(input.emoji);
     const jsonBuffer = gunzipSync(tgsBuffer);
     const animation = JSON.parse(jsonBuffer.toString('utf-8')) as { ip?: number; op?: number };
@@ -37,16 +33,23 @@ export class TgsTelegramEmojiConverter implements EmojiFormatConverter<Buffer> {
     const info = parseRlottieInfo(infoBuffer);
 
     if (isSingleFrame) {
-      return this.convertSingleFrame(jsonBuffer, info, options);
+      const buffer = await this.convertSingleFrame(jsonBuffer, info);
+      return {
+        type: 'png',
+        buffer
+      };
     }
 
-    return this.convertAnimation(jsonBuffer, info, options);
+    const buffer = await this.convertAnimation(jsonBuffer, info);
+    return {
+      type: 'gif',
+      buffer
+    };
   }
 
   private async convertSingleFrame(
     jsonBuffer: Buffer,
-    info: { width: number; height: number; totalFrames: number; frameRate: number },
-    options?: TelegramEmojiConvertOptions
+    info: { width: number; height: number; totalFrames: number; frameRate: number }
   ): Promise<Buffer> {
     const rgbaBuffer = await runCommandAndCaptureOutput(
       this.rlottieCliPath,
@@ -78,7 +81,7 @@ export class TgsTelegramEmojiConverter implements EmojiFormatConverter<Buffer> {
     const chunks: Buffer[] = [];
     ffmpeg.stdout.on('data', (chunk: Buffer) => chunks.push(chunk));
 
-    const result = await new Promise<Buffer>((resolvePromise, reject) => {
+    return new Promise<Buffer>((resolvePromise, reject) => {
       ffmpeg.on('error', reject);
       ffmpeg.on('close', (code) => {
         if (code === 0) {
@@ -91,19 +94,11 @@ export class TgsTelegramEmojiConverter implements EmojiFormatConverter<Buffer> {
 
       ffmpeg.stdin.end(rgbaBuffer);
     });
-
-    if (options?.outputPath) {
-      const outputPath = resolve(options.outputPath);
-      await writeFile(outputPath, result);
-    }
-
-    return result;
   }
 
   private async convertAnimation(
     jsonBuffer: Buffer,
-    info: { width: number; height: number; totalFrames: number; frameRate: number },
-    options?: TelegramEmojiConvertOptions
+    info: { width: number; height: number; totalFrames: number; frameRate: number }
   ): Promise<Buffer> {
     const ffmpeg = spawn(this.ffmpegPath, [
       '-y',
@@ -151,13 +146,6 @@ export class TgsTelegramEmojiConverter implements EmojiFormatConverter<Buffer> {
 
     ffmpeg.stdin.end();
 
-    const result = await ffmpegCompletion;
-
-    if (options?.outputPath) {
-      const outputPath = resolve(options.outputPath);
-      await writeFile(outputPath, result);
-    }
-
-    return result;
+    return ffmpegCompletion;
   }
 }

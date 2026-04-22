@@ -1,5 +1,6 @@
+import { writeFile } from 'fs/promises';
+
 import { TelegramEmojiConverter } from './TelegramEmojiConverter';
-import { TelegramEmojiConvertMode } from './types';
 import type { TelegramEmojiJson } from './types';
 
 async function main(): Promise<void> {
@@ -12,23 +13,18 @@ async function main(): Promise<void> {
   const secondAnimatedTgsInput = await loadTelegramEmojiJson('https://t.me/i/emoji/5796440171364749940.json');
   const webpInput = await loadTelegramEmojiJson('https://t.me/i/emoji/5452025154760618539.json');
 
-  const animatedGifBuffer = await converter.convert(animatedTgsInput, {
-    mode: TelegramEmojiConvertMode.MemoryOnly,
-    outputPath: 'output-from-tgs-animated.gif'
-  });
+  const animatedTgsResult = await converter.convert(animatedTgsInput);
+  await writeFile('output-from-tgs-animated.gif', animatedTgsResult.buffer);
 
-  const secondAnimatedGifBuffer = await converter.convert(secondAnimatedTgsInput, {
-    mode: TelegramEmojiConvertMode.MemoryOnly,
-    outputPath: 'output-from-tgs-second-animated.gif'
-  });
+  const secondAnimatedTgsResult = await converter.convert(secondAnimatedTgsInput);
+  await writeFile('output-from-tgs-second-animated.gif', secondAnimatedTgsResult.buffer);
 
-  const webpPngBuffer = await converter.convert(webpInput, {
-    outputPath: 'output-from-webp.png'
-  });
+  const webpResult = await converter.convert(webpInput);
+  await writeFile('output-from-webp.png', webpResult.buffer);
 
-  console.log('output-from-tgs-animated.gif', animatedGifBuffer.length);
-  console.log('output-from-tgs-second-animated.gif', secondAnimatedGifBuffer.length);
-  console.log('output-from-webp.png', webpPngBuffer.length);
+  console.log('output-from-tgs-animated.gif', animatedTgsResult.type, animatedTgsResult.buffer.length);
+  console.log('output-from-tgs-second-animated.gif', secondAnimatedTgsResult.type, secondAnimatedTgsResult.buffer.length);
+  console.log('output-from-webp.png', webpResult.type, webpResult.buffer.length);
 }
 
 async function loadTelegramEmojiJson(url: string): Promise<TelegramEmojiJson> {

@@ -8,5 +8,9 @@ export {
 } from './converters/tgs-strategies/TelegramEmojiRlottieHelper';
 export { downloadBuffer } from './utils/buffer-util';
 export { runCommand, runCommandAndCaptureOutput } from './utils/process-util';
-export { TelegramEmojiConvertMode } from './types';
-export type { EmojiFormatConverter, TelegramEmojiConvertOptions, TelegramEmojiConverterOptions, TelegramEmojiJson } from './types';
+export type {
+  EmojiFormatConverter,
+  TelegramEmojiConversionResult,
+  TelegramEmojiConverterOptions,
+  TelegramEmojiJson
+} from './types';

@@ -41,7 +41,8 @@ You also need working binaries on the machine:
 ## Usage
 
 ```ts
-import { TelegramEmojiConverter, TelegramEmojiConvertMode } from 'tgs-converter';
+import { writeFile } from 'node:fs/promises';
+import { TelegramEmojiConverter } from 'tgs-converter';
 
 const converter = new TelegramEmojiConverter({
   rlottieCliPath: 'C:\\rlottie-cli\\rlottie-cli.exe',
@@ -51,12 +52,11 @@ const converter = new TelegramEmojiConverter({
 const response = await fetch('https://t.me/i/emoji/5456140674028019486.json');
 const input = await response.json();
 
-const outputBuffer = await converter.convert(input, {
-  mode: TelegramEmojiConvertMode.MemoryOnly,
-  outputPath: 'output.gif'
-});
+const result = await converter.convert(input);
 
-console.log(outputBuffer.length);
+await writeFile(`output.${result.type}`, result.buffer);
+
+console.log(result.type, result.buffer.length);
 ```
 
 ## Input format
@@ -106,43 +106,3 @@ Current local tests cover:
 - animated `tgs -> gif`
 - single-frame `tgs -> png`
 - `webp -> png`
-
-## Publishing to npm
-
-Typical flow:
-
-1. Build the package:
-
-```bash
-npm run build
-```
-
-2. Check published contents:
-
-```bash
-npm pack
-```
-
-3. Login to npm:
-
-```bash
-npm login
-```
-
-4. Publish:
-
-```bash
-npm publish
-```
-
-If the package is scoped and public, use:
-
-```bash
-npm publish --access public
-```
-
-## Notes
-
-- The library returns a `Buffer`.
-- If `outputPath` is provided, the result is also written to disk.
-- TGS conversion currently uses only the `memory-only` mode.

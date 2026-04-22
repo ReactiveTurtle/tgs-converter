@@ -1,5 +1,5 @@
 {
-  "name": "tgs-converter",
+  "name": "telegram-emoji-converter",
   "version": "0.1.0",
   "description": "TypeScript library for converting Telegram emoji assets.",
   "main": "dist/index.js",

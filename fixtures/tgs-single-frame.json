@@ -1,0 +1,8 @@
+{
+  "type": "tgs",
+  "emoji": "tgs-single-frame.tgs",
+  "thumb": "https://cdn4.telesco.pe/file/dKz8fv0OtmRm97RK7A0QtQVsriJGu5CM-xfFMvI2pIxea0jNYKFkrR0HZO_46bpkC-s2C59MPdXfT652KysMWUbDzumkoToBFWrY3A-WdyutDpplpO6wUo3wh9NpfufwUU9HME6mpTCnCjVT1nmAgg2hfPncBIo0IO1c5qLlqAZ_zFYmqqV-FjQx1O7keg7pR8lvC-t3pbpLVZlMbXtpSj9hXT4XeWTTKu7n8VD-XHgy5ntbLNytMmQLSrqeYEMKfvulz_7vO3wm5oV6ADzjmpNgipU09mFMirVeRkxl1v5qroYtIl7pp1FZsKfSBbf4QHgptqiDHViCpG-ikI_DPg",
+  "text_color": true,
+  "path": "M98,430c-59-4,72-101,72-109,0-14-78-58-79-95-1-69,79-32,107-46,7-3,11-10,16-16,38-38,93-109,152-61,40,34,86,88,41,139-19,21-61,50-74,74-13,24,23,88-30,104-52,16-92-76-111-76-10,0-73,86-94,86zM288,390c27-5,8-61,15-82,12-43,96-71,91-120-2-17-16-28-28-39-60-62-85-7-133,41-7,6-13,15-22,19-24,9-53,0-78,3-41,5,61,89,70,98,12,12,75,80,85,80z",
+  "size": 512
+}

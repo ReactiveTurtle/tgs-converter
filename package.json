@@ -1,0 +1,32 @@
+{
+  "name": "tgs-converter",
+  "version": "0.1.0",
+  "description": "TypeScript library for converting Telegram emoji assets.",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "type": "commonjs",
+  "files": [
+    "dist"
+  ],
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "clean": "node -e \"require('node:fs').rmSync('dist',{recursive:true,force:true})\"",
+    "start": "npm run build && node dist/index.js",
+    "test:conversion": "npm run build && node dist/test-conversion.js",
+    "test": "npm run build && node --test test/*.test.js"
+  },
+  "keywords": [
+    "telegram",
+    "emoji",
+    "typescript",
+    "library"
+  ],
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "^25.6.0",
+    "typescript": "^6.0.3"
+  }
+}

@@ -15,6 +15,10 @@ This library relies on two external binaries:
 - `ffmpeg`
 - `rlottie-cli`
 
+`rlottie-cli` repository:
+
+- https://github.com/ReactiveTurtle/rlottie-cli
+
 `rlottie-cli` is used to read Lottie JSON and render raw RGBA frames.
 
 `ffmpeg` is used to encode the final output:

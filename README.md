@@ -45,8 +45,13 @@ import { writeFile } from 'node:fs/promises';
 import { TelegramEmojiConverter } from 'tgs-converter';
 
 const converter = new TelegramEmojiConverter({
+  // Windows:
   rlottieCliPath: 'C:\\rlottie-cli\\rlottie-cli.exe',
-  ffmpegPath: 'C:\\ffmpeg\\bin\\ffmpeg.exe'
+  ffmpegPath: 'C:\\ffmpeg\\bin\\ffmpeg.exe',
+
+  // Linux:
+  // rlottieCliPath: '/usr/local/bin/rlottie-cli',
+  // ffmpegPath: '/usr/bin/ffmpeg'
 });
 
 const response = await fetch('https://t.me/i/emoji/5456140674028019486.json');
